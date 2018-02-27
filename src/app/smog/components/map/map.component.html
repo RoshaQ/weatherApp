@@ -1,0 +1,23 @@
+  <div class="row">
+    <div class="col-lg-6">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 800">
+        <svg:path *ngFor="let voivodeship of voivodeshipsTable; let i = index" [attr.data-index]="i" (mouseover)="voivodeshipHover = voivodeship.name"
+          (click)="clicked(voivodeship)" class="blob" [class.selected]="hasVoivodeship(voivodeship)" [attr.d]="voivodeship.path"
+          text="voivodeship.name" fill="currentColor">
+        </svg:path>
+      </svg>
+    </div>
+
+
+    <div class="col-lg-5" *ngIf="cities">
+      <p-dataTable [value]="citiesSort" [rows]="15" [paginator]="true" [pageLinks]="3">
+        <p-column field="city" header="city"></p-column>
+        <p-column field="pollutionLevelAvg" header="Średni poziom zanieczyszczeń"></p-column>
+        <ng-template pTemplate="paginatorLeft">
+        </ng-template>
+        <ng-template pTemplate="paginatorRight">
+        </ng-template>
+      </p-dataTable>
+
+    </div>
+  </div>
