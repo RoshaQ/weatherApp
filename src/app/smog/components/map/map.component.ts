@@ -11,7 +11,6 @@ import { VoivodeshipTo } from '../../service/model/voivodeship-to';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
-import { TableModule } from 'primeng/table';
 import { DataTableModule } from 'primeng/datatable';
 @Component({
   selector: 'app-map',
@@ -26,7 +25,6 @@ export class MapComponent implements OnInit, OnDestroy {
   selectedVoivodeship: VoivodeshipTo;
   map = [];
   cities: City[];
-  citiesSort: City[];
   voivodenshipList$: Observable<VoivodeshipTo[]>;
   voivodenshipListSubscription: Subscription;
   sensorsListSubscription: Subscription;
@@ -62,17 +60,17 @@ export class MapComponent implements OnInit, OnDestroy {
 
     if (this.selectedVoivodeship == null) {
       this.selectedVoivodeship = voivodeship;
-      this.newMethod();
+      this.fillTable();
 
     } else {
       if (!(this.selectedVoivodeship === voivodeship)) {
         this.selectedVoivodeship = voivodeship;
-        this.newMethod();
+        this.fillTable();
       }
     }
   }
 
-  private newMethod() {
+  private fillTable() {
     if (this.selectedVoivodeship != null) {
       this.sensorsService.readSensorsList(this.selectedVoivodeship.location);
       this.sensorsListSubscription = this.sensorsStore.state$.pipe(map((s: any) => s.sensorsList), distinctUntilChanged()).subscribe((sensorsList: SensorTo[]) => {
@@ -86,12 +84,7 @@ export class MapComponent implements OnInit, OnDestroy {
             if (sensor.address.locality && !this.cities.find(city => city.city === sensor.address.locality)) {
 
               const sensorsTable = [];
-              sensorsTable.push(sensor);
-              const sensorCity = {
-                city: sensor.address.locality,
-                sensors: sensorsTable,
-                pollutionLevelAvg: sensor.pollutionLevel
-              } as City;
+              const sensorCity = this.fillCityObject(sensorsTable, sensor, sensor.pollutionLevel);
               this.cities.push(sensorCity);
             } else {
               if (this.cities.find(city => city.city === sensor.address.locality)) {
@@ -100,20 +93,9 @@ export class MapComponent implements OnInit, OnDestroy {
                 const pollutionLevelAvg = (this.cities[indexCity].pollutionLevelAvg + sensor.pollutionLevel)
                   / (this.cities[indexCity].sensors.length + 1);
                 const sensorsTable = this.cities[indexCity].sensors;
-                sensorsTable.push(sensor);
-                const sensorCity = {
-                  city: sensor.address.locality,
-                  sensors: sensorsTable,
-                  pollutionLevelAvg: pollutionLevelAvg
-                } as City;
+                const sensorCity = this.fillCityObject(sensorsTable, sensor, pollutionLevelAvg);
 
                 this.cities[indexCity] = sensorCity;
-                if (this.cities.length > 1) {
-                  this.citiesSort = this.cities.sort((firstCity: City, secondCity: City): number => {
-                    if (firstCity.city.toLowerCase() < secondCity.city.toLowerCase()) { return -1; }
-                    if (firstCity.city.toLowerCase() > secondCity.city.toLowerCase()) { return 1; }
-                  });
-                }
               }
             }
           });
@@ -121,6 +103,16 @@ export class MapComponent implements OnInit, OnDestroy {
       });
       console.log(this.cities);
     }
+  }
+
+  private fillCityObject(sensorsTable: SensorTo[], sensor: SensorTo, pollutionLevelAvg: number) {
+    sensorsTable.push(sensor);
+    const sensorCity = {
+      city: sensor.address.locality,
+      sensors: sensorsTable,
+      pollutionLevelAvg: pollutionLevelAvg
+    } as City;
+    return sensorCity;
   }
 
   hasVoivodeship(voivodeship: any): boolean {

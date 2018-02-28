@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { City } from '../../service/model/city';
+import { Component, OnInit, Input } from '@angular/core';
+import { DataTableModule } from 'primeng/datatable';
 
 @Component({
   selector: 'app-table-voivodeship',
@@ -7,9 +9,13 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TableVoivodeshipComponent implements OnInit {
 
-  constructor() { }
+  @Input() cities: City[];
+
+  constructor() {
+   }
 
   ngOnInit() {
   }
+
 
 }

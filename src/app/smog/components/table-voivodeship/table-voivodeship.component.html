@@ -1,3 +1,10 @@
-<p>
-  table-voivodeship works!
-</p>
+
+  <p-dataTable [value]="cities" [rows]="15" sortField="city" [paginator]="true" [pageLinks]="3">
+    <p-column field="city" header="city" [filter]="true" [sortable]="true"></p-column>
+    <p-column field="pollutionLevelAvg" header="Średni poziom zanieczyszczeń" [sortable]="true"></p-column>
+    <ng-template pTemplate="paginatorLeft">
+    </ng-template>
+    <ng-template pTemplate="paginatorRight">
+    </ng-template>
+  </p-dataTable>
+
