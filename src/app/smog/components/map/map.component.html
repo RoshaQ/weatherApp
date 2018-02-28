@@ -8,8 +8,14 @@
         </svg:path>
       </svg>
     </div>
-    <div class="col-lg-5" *ngIf="cities">
+    <div class="col-lg-5" id="cities-table">
+    <div id="spinner"*ngIf="isLoading$ | async">
+        <p-progressSpinner [style]="{width: '50px', height: '50px'}" strokeWidth="8" fill="#EEEEEE" animationDuration="1s"></p-progressSpinner>
+      <h3>Ładuję...</h3>
+      </div>
+    <div *ngIf="cities && !(isLoading$ | async)">
       <app-table-voivodeship [cities]="cities"></app-table-voivodeship>
+    </div>
     </div>
   </div>
 </div>

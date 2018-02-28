@@ -4,4 +4,5 @@ export interface City {
     city: string;
     sensors: SensorTo[];
     pollutionLevelAvg?: number;
+    pollutionInformation?: string;
 }

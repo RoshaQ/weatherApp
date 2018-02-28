@@ -14,12 +14,15 @@ import { MapPolandService } from './service/map-poland/map-poland.service';
 import { VoivodenshipsStore } from './service/map-poland/voivodenships-store';
 import { SensorsAdapter } from './service/sensors/sensors.adapter';
 import { HttpClientModule } from '@angular/common/http';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 @NgModule({
   imports: [
     CommonModule,
     HttpClientModule,
     TableModule,
-    DataTableModule
+    DataTableModule,
+    ProgressSpinnerModule,
+    TableModule
   ],
   declarations: [MapComponent, TableVoivodeshipComponent, StartpageComponent],
   exports: [MapComponent, TableVoivodeshipComponent, StartpageComponent],

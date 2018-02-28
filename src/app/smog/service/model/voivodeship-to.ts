@@ -1,10 +1,10 @@
 import { Location } from './location';
 export interface VoivodeshipTo {
-  id: string;
-  curvature: string;
-  style: string;
-  name: string;
+  id?: string;
+  curvature?: string;
+  style?: string;
+  name?: string;
   // tslint:disable-next-line:max-line-length
-  path: string;
+  path?: string;
   location: any;
 }

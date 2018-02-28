@@ -1,10 +1,32 @@
-
-  <p-dataTable [value]="cities" [rows]="15" sortField="city" [paginator]="true" [pageLinks]="3">
-    <p-column field="city" header="city" [filter]="true" [sortable]="true"></p-column>
-    <p-column field="pollutionLevelAvg" header="Średni poziom zanieczyszczeń" [sortable]="true"></p-column>
-    <ng-template pTemplate="paginatorLeft">
+<p-dataTable [value]="cities" [rows]="15" sortField="city" scrollable="true" scrollHeight="420px">
+  <p-column field="city" header="Miejscowość" [filter]="true" [sortable]="true"></p-column>
+  <p-column field="pollutionLevelAvg" header="Średni poziom zanieczyszczeń" [sortable]="true">
+    <ng-template let-col let-pollutionLevelAvg="rowData" pTemplate="body">
+      <span [style.color]="red">{{pollutionLevelAvg[col.field]}}</span>
     </ng-template>
-    <ng-template pTemplate="paginatorRight">
-    </ng-template>
-  </p-dataTable>
-
+  </p-column>
+  <p-footer>
+    Liczba miejscowości {{cities.length}}
+  </p-footer>
+</p-dataTable>
+<!-- <p-table [columns]="cols" [value]="cities">
+      <ng-template pTemplate="header">
+          <tr>
+              <th [pSortableColumn]="col.field">Miejscowość
+                  <p-sortIcon [field]="field"></p-sortIcon>
+              </th>
+              <th [pSortableColumn]="field">Poziom zanieczyszczeń
+                  <p-sortIcon [field]="col.field"></p-sortIcon>
+              </th>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-city>
+          <tr>
+              <td>{{city.city}}</td>
+              <td>{{city.pollutionLevelAvg}}</td>
+          </tr>
+      </ng-template>
+      <ng-template pTemplate="summary">
+          Liczba miejscowości {{cities?.length}}
+      </ng-template>
+  </p-table> -->

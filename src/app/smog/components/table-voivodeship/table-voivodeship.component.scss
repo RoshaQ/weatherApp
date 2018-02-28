@@ -1,4 +1,11 @@
-.ui-datatable-tablewrapper {
-  height:480px !important;
-  background:blue;
+::ng-deep .ui-datatable-scrollable-view {
+  height:480px;
+
 }
+
+::ng-deep .ui-datatable {
+  border-color: grey;
+  border-width: 1px;
+  border-style: solid;
+}
+

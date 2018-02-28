@@ -12,6 +12,7 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DataTableModule } from 'primeng/datatable';
+import {ProgressSpinnerModule} from 'primeng/progressspinner';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -19,18 +20,17 @@ import { DataTableModule } from 'primeng/datatable';
 })
 export class MapComponent implements OnInit, OnDestroy {
 
-  voivodeshipsTable: VoivodeshipTo[];
-  selected: number;
   voivodeshipHover = '';
   selectedVoivodeship: VoivodeshipTo;
-  map = [];
+  voivodeshipsTable: VoivodeshipTo[];
+  sensorsList: SensorTo[];
   cities: City[];
+  sensorsList$: Observable<SensorTo[]>;
   voivodenshipList$: Observable<VoivodeshipTo[]>;
   voivodenshipListSubscription: Subscription;
   sensorsListSubscription: Subscription;
-  sensorsAllInformationSubscription: Subscription;
-  sensorsList: SensorTo[];
-  sensorsInformation: SensorAllInformationTo[];
+  isLoading$: Observable<boolean>;
+
   constructor(
     public mapPolandService: MapPolandService,
     private voivodenshipsStore: VoivodenshipsStore,
@@ -42,75 +42,82 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.selectedVoivodeship = null;
-
     this.mapPolandService.readVoivodenships();
+    this.fillVoivodenshipsList();
+    this.fillTable();
+    this.isLoading$ = this.sensorsStore.state$.pipe(map((s: any) => s.isLoading), distinctUntilChanged());
+  }
+
+  private fillVoivodenshipsList() {
     this.voivodenshipList$ = this.voivodenshipsStore.state$.pipe(map((s: any) => s.voivodenshipsList), distinctUntilChanged());
     this.voivodenshipListSubscription = this.voivodenshipList$.subscribe((voivodenships: VoivodeshipTo[]) => {
       if (voivodenships) {
         this.voivodeshipsTable = voivodenships;
       }
     });
-
-
-
-
   }
 
   clicked(voivodeship: any) {
-
     if (this.selectedVoivodeship == null) {
       this.selectedVoivodeship = voivodeship;
-      this.fillTable();
-
+      this.sensorsService.readSensorsList(this.selectedVoivodeship.location);
     } else {
       if (!(this.selectedVoivodeship === voivodeship)) {
         this.selectedVoivodeship = voivodeship;
-        this.fillTable();
+        this.sensorsService.readSensorsList(this.selectedVoivodeship.location);
       }
     }
   }
 
   private fillTable() {
-    if (this.selectedVoivodeship != null) {
-      this.sensorsService.readSensorsList(this.selectedVoivodeship.location);
-      this.sensorsListSubscription = this.sensorsStore.state$.pipe(map((s: any) => s.sensorsList), distinctUntilChanged()).subscribe((sensorsList: SensorTo[]) => {
-        if (sensorsList) {
-          this.sensorsList = sensorsList;
-          console.log(sensorsList);
-          this.cities = [];
+    this.selectedVoivodeship = {
+      location: {
+        southwestLat: '51.67365607907271',
+        southwestLong: '2.2584999999999127',
+        northeastLat: '56.41488342549234',
+        northeastLong: '36.00849999999991',
+      }
+    };
+    this.sensorsService.readSensorsList(this.selectedVoivodeship.location);
+    this.sensorsList$ = this.sensorsStore.state$.pipe(
+      map((s: any) => s.sensorsList),
+      distinctUntilChanged());
+      this.sensorsListSubscription = this.sensorsList$.subscribe((sensorsList: SensorTo[]) => {
+      if (sensorsList) {
+        this.sensorsList = sensorsList;
+        this.cities = [];
+        this.groupSensorsForCity();
+        this.avgPollutionLevelForCity();
+      }
+    });
+  }
+  private groupSensorsForCity() {
+    this.sensorsList.forEach((sensor) => {
+      if (sensor.address.locality && !this.cities.find(city => city.city === sensor.address.locality)) {
+        const sensorsTable = [];
+        const sensorCity = this.fillCityObject(sensorsTable, sensor);
+        this.cities.push(sensorCity);
+      } else {
+        const indexCity = this.cities.findIndex(city => city.city === sensor.address.locality);
+        this.addSensorToTheExistingCity(indexCity, sensor);
+      }
+    });
+  }
 
-          sensorsList.forEach((sensor) => {
-
-            if (sensor.address.locality && !this.cities.find(city => city.city === sensor.address.locality)) {
-
-              const sensorsTable = [];
-              const sensorCity = this.fillCityObject(sensorsTable, sensor, sensor.pollutionLevel);
-              this.cities.push(sensorCity);
-            } else {
-              if (this.cities.find(city => city.city === sensor.address.locality)) {
-
-                const indexCity = this.cities.findIndex(city => city.city === sensor.address.locality);
-                const pollutionLevelAvg = (this.cities[indexCity].pollutionLevelAvg + sensor.pollutionLevel)
-                  / (this.cities[indexCity].sensors.length + 1);
-                const sensorsTable = this.cities[indexCity].sensors;
-                const sensorCity = this.fillCityObject(sensorsTable, sensor, pollutionLevelAvg);
-
-                this.cities[indexCity] = sensorCity;
-              }
-            }
-          });
-        }
-      });
-      console.log(this.cities);
+  private addSensorToTheExistingCity(indexCity: number, sensor: SensorTo) {
+    if (indexCity > -1) {
+      const sensorsTable = this.cities[indexCity].sensors;
+      const sensorCity = this.fillCityObject(sensorsTable, sensor);
+      this.cities[indexCity] = sensorCity;
     }
   }
 
-  private fillCityObject(sensorsTable: SensorTo[], sensor: SensorTo, pollutionLevelAvg: number) {
+  private fillCityObject(sensorsTable: SensorTo[], sensor: SensorTo, pollutionLevelAvg?: number) {
     sensorsTable.push(sensor);
     const sensorCity = {
       city: sensor.address.locality,
       sensors: sensorsTable,
-      pollutionLevelAvg: pollutionLevelAvg
+      pollutionLevelAvg: 0
     } as City;
     return sensorCity;
   }
@@ -119,9 +126,17 @@ export class MapComponent implements OnInit, OnDestroy {
     return this.selectedVoivodeship === voivodeship;
   }
 
+  avgPollutionLevelForCity() {
+    this.cities.forEach(element => {
+      element.sensors.forEach(sensor => {
+        element.pollutionLevelAvg = element.pollutionLevelAvg + sensor.pollutionLevel;
+      });
+      element.pollutionLevelAvg = element.pollutionLevelAvg / element.sensors.length;
+    });
+  }
+
   ngOnDestroy(): void {
     this.voivodenshipListSubscription.unsubscribe();
-    this.sensorsAllInformationSubscription.unsubscribe();
     this.sensorsListSubscription.unsubscribe();
   }
 }
