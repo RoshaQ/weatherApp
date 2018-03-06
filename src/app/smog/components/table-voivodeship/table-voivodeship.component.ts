@@ -1,4 +1,9 @@
-import { City } from '../../service/model/city';
+import { City } from './../../service/model/city';
+import { distinctUntilChanged, map } from 'rxjs/operators';
+import { Observable } from 'rxjs/Observable';
+import { CitySensorsStore } from './../../service/sensors/city-sensors-store';
+import { DialogSensorComponent } from './../dialog-sensor/dialog-sensor.component';
+import { SensorTo } from './../../service/model/sensor-to';
 import { Component, OnInit, Input } from '@angular/core';
 import { DataTableModule } from 'primeng/datatable';
 
@@ -9,13 +14,24 @@ import { DataTableModule } from 'primeng/datatable';
 })
 export class TableVoivodeshipComponent implements OnInit {
 
+  isOpen = false;
+  isOpen$: Observable<boolean>;
   @Input() cities: City[];
-
-  constructor() {
-   }
-
-  ngOnInit() {
+  constructor(private citySensorsStore: CitySensorsStore) {
   }
 
+  ngOnInit() {
+    this.isOpen$ = this.citySensorsStore.state$.pipe(
+      map(s => s.modalOpen),
+      distinctUntilChanged()
+    );
+  }
+  selectCity(cityName: string) {
+    // tslint:disable-next-line:no-shadowed-variable
+    const city = this.cities.find((city: City) => {
+      return city.city === cityName;
+    });
+    this.citySensorsStore.setCitiesSensors(city, true);
+  }
 
 }

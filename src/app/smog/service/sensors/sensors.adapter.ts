@@ -9,7 +9,7 @@ import { SensorAllInformationTo } from '../model/sensorAllInformation-to';
 export class SensorsAdapter {
 
   private readonly baseUrl = 'https://airapi.airly.eu/v1/';
-  private readonly apiKey= '&apikey=fae55480ef384880871f8b40e77bbef9';
+  private readonly apiKey = '&apikey=fae55480ef384880871f8b40e77bbef9';
   constructor(private http: HttpClient) {
   }
 
@@ -20,8 +20,12 @@ export class SensorsAdapter {
   }
 
   readSensorsAllInformation(id: number): Observable<SensorAllInformationTo> {
-    const url = `${this.baseUrl}sensor/measurements?sensorId=${id}${this.apiKey}`;
+    const url = `${this.baseUrl}sensor/measurements?sensorId=${id}&historyHours=24&historyResolutionHours=1&${this.apiKey}`;
     return this.http.get<SensorAllInformationTo>(url);
   }
+
+
+
+
 
 }

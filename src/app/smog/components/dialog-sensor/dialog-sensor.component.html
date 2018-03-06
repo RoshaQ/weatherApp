@@ -1,0 +1,9 @@
+<p-dialog [(visible)]="display" (onAfterHide)="alert('Dialog hidden!')" [width]="800" [height]="600" [closable]=false>
+  <p-header>
+    {{titleModal}}
+</p-header>
+  Content
+  <p-footer>
+    <button type="button" (click)="close()" label="No"></button>
+</p-footer>
+</p-dialog>

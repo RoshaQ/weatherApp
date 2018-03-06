@@ -27,7 +27,7 @@ export class SensorsService {
     ids.forEach((id) => {
       this.adapter.readSensorsAllInformation(id).subscribe((sensor: SensorAllInformationTo) => {
         this.sensorsAllInformationList.push(sensor);
-
+        this.store.setSensorsInformation(this.sensorsAllInformationList);
       });
     });
     this.store.setSensorsInformation(this.sensorsAllInformationList);

@@ -1,17 +1,11 @@
-
-.view {
-  background: url("https://mdbootstrap.com/img/Photos/Others/img (50).jpg") no-repeat center center;
-  background-size: cover;
-}
-
 ::ng-deep .navbar {
   background-color: transparent;
 }
 ::ng-deep .top-nav-collapse {
-  background-color: #4285F4;
+  background-color:  rgb(175, 175, 175);
 }
 @media only screen and (max-width: 768px) {
   .navbar {
-      background-color: #4285F4;
+      background-color: rgb(175, 175, 175);
   }
 }

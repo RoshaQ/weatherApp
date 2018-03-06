@@ -1,3 +1,4 @@
+import { CitySensorsStore } from './service/sensors/city-sensors-store';
 import { DataTableModule } from 'primeng/datatable';
 import { TableModule } from 'primeng/table';
 import { SensorsService } from './service/sensors/sensors.service';
@@ -14,7 +15,9 @@ import { MapPolandService } from './service/map-poland/map-poland.service';
 import { VoivodenshipsStore } from './service/map-poland/voivodenships-store';
 import { SensorsAdapter } from './service/sensors/sensors.adapter';
 import { HttpClientModule } from '@angular/common/http';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DialogModule } from 'primeng/dialog';
+import { DialogSensorComponent } from './components/dialog-sensor/dialog-sensor.component';
 @NgModule({
   imports: [
     CommonModule,
@@ -22,9 +25,11 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
     TableModule,
     DataTableModule,
     ProgressSpinnerModule,
-    TableModule
+    TableModule,
+    DialogModule,
+    MDBBootstrapModule.forRoot(),
   ],
-  declarations: [MapComponent, TableVoivodeshipComponent, StartpageComponent],
+  declarations: [MapComponent, TableVoivodeshipComponent, StartpageComponent, DialogSensorComponent],
   exports: [MapComponent, TableVoivodeshipComponent, StartpageComponent],
   providers: [
     HttpClientModule,
@@ -33,7 +38,8 @@ import {ProgressSpinnerModule} from 'primeng/progressspinner';
     SensorsService,
     SmogService,
     MapPolandService,
-    SensorsAdapter],
+    SensorsAdapter,
+    CitySensorsStore],
   schemas: [NO_ERRORS_SCHEMA]
 })
 export class SmogModule { }

@@ -1,14 +1,29 @@
-<p-dataTable [value]="cities" [rows]="15" sortField="city" scrollable="true" scrollHeight="420px">
+<p-dataTable [value]="cities" [rows]="15" sortField="city" scrollable="true" selectionMode="single"  scrollHeight="420px">
   <p-column field="city" header="Miejscowość" [filter]="true" [sortable]="true"></p-column>
   <p-column field="pollutionLevelAvg" header="Średni poziom zanieczyszczeń" [sortable]="true">
     <ng-template let-col let-pollutionLevelAvg="rowData" pTemplate="body">
       <span [style.color]="red">{{pollutionLevelAvg[col.field]}}</span>
     </ng-template>
   </p-column>
+  <p-column styleClass="col-button">
+    <ng-template pTemplate="header">
+        Więcej Info
+    </ng-template>
+    <ng-template let-city="rowData" pTemplate="body">
+        <button type="button" pButton (click)="selectCity(city.city)"></button>
+    </ng-template>
+</p-column>
   <p-footer>
     Liczba miejscowości {{cities.length}}
   </p-footer>
 </p-dataTable>
+<div *ngIf="isOpen$ | async">
+<app-dialog-sensor></app-dialog-sensor>
+</div>
+<!-- <p-dialog header="Title" [(visible)]="display" [width]="300">
+    Content
+</p-dialog> -->
+
 <!-- <p-table [columns]="cols" [value]="cities">
       <ng-template pTemplate="header">
           <tr>
