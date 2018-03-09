@@ -8,6 +8,7 @@ import { SensorsState } from './sensors-state';
 
 export class SensorsStore {
 
+  private sensorsAllInformationList: SensorAllInformationTo[] = [];
   private stateSource = new BehaviorSubject<SensorsState>(
     {
       isLoading: true,
@@ -33,16 +34,21 @@ export class SensorsStore {
 
   resetSensorsInformation() {
     this.emitNewState({
-      isLoading: true,
+      isLoading: false,
       sensorsInformation: null
     } as SensorsState);
   }
 
-  setSensorsInformation(sensors: SensorAllInformationTo[]) {
-    this.emitNewState({
-      isLoading: false,
-      sensorsInformation: sensors
-    } as SensorsState);
+  setSensorsInformation(sensor: SensorAllInformationTo, length: number) {
+    this.sensorsAllInformationList.push(sensor);
+    const sensors = this.sensorsAllInformationList;
+    if (sensors.length === length) {
+      this.emitNewState({
+        isLoading: false,
+        sensorsInformation: sensors
+      } as SensorsState);
+      this.sensorsAllInformationList = [];
+    }
   }
 
   resetCitiesSensors() {

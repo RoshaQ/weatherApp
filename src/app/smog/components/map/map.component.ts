@@ -72,10 +72,10 @@ export class MapComponent implements OnInit, OnDestroy {
   private fillTable() {
     this.selectedVoivodeship = {
       location: {
-        southwestLat: '51.67365607907271',
-        southwestLong: '2.2584999999999127',
-        northeastLat: '56.41488342549234',
-        northeastLong: '36.00849999999991',
+        southwestLat: '48.23317386736747',
+        southwestLong: '4.917191406249913',
+        northeastLat: '55.3364033237913',
+        northeastLong: '38.66719140624991',
       }
     };
     this.sensorsService.readSensorsList(this.selectedVoivodeship.location);

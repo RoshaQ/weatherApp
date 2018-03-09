@@ -1,3 +1,4 @@
+import {ButtonModule} from 'primeng/primeng';
 import { CitySensorsStore } from './service/sensors/city-sensors-store';
 import { DataTableModule } from 'primeng/datatable';
 import { TableModule } from 'primeng/table';
@@ -18,6 +19,9 @@ import { HttpClientModule } from '@angular/common/http';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { DialogSensorComponent } from './components/dialog-sensor/dialog-sensor.component';
+import {ChartModule} from 'primeng/chart';
+import {TabViewModule} from 'primeng/tabview';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -27,6 +31,9 @@ import { DialogSensorComponent } from './components/dialog-sensor/dialog-sensor.
     ProgressSpinnerModule,
     TableModule,
     DialogModule,
+    ChartModule,
+    ButtonModule,
+    TabViewModule,
     MDBBootstrapModule.forRoot(),
   ],
   declarations: [MapComponent, TableVoivodeshipComponent, StartpageComponent, DialogSensorComponent],

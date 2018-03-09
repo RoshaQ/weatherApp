@@ -24,13 +24,17 @@ export class SensorsService {
   readSensorsAllInformation(ids: number[]) {
     this.sensorsAllInformationList = [];
     this.store.resetSensorsInformation();
-    ids.forEach((id) => {
+    ids.forEach((id: number) => {
       this.adapter.readSensorsAllInformation(id).subscribe((sensor: SensorAllInformationTo) => {
         this.sensorsAllInformationList.push(sensor);
-        this.store.setSensorsInformation(this.sensorsAllInformationList);
-      });
+        // if (this.sensorsAllInformationList.length === ids.length) {
+          this.store.setSensorsInformation(sensor, ids.length);
+        // }
+      },
+        error => this.onError('Sensors List load with Error'),
+        () => this.onCompleted('Sensors List load Completed'));
     });
-    this.store.setSensorsInformation(this.sensorsAllInformationList);
+    // this.store.setSensorsInformation(this.sensorsAllInformationList);
   }
 
   private onCompleted(message: string) {
