@@ -1,9 +1,7 @@
-import { City } from './../../service/model/city';
+import { CitySensorsStore } from './../../../service/sensors/city-sensors-store';
+import { City } from './../../../service/model/city';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 import { Observable } from 'rxjs/Observable';
-import { CitySensorsStore } from './../../service/sensors/city-sensors-store';
-import { DialogSensorComponent } from './../dialog-sensor/dialog-sensor.component';
-import { SensorTo } from './../../service/model/sensor-to';
 import { Component, OnInit, Input } from '@angular/core';
 import { DataTableModule } from 'primeng/datatable';
 
@@ -19,7 +17,7 @@ export class TableVoivodeshipComponent implements OnInit {
   @Input() cities: City[];
   constructor(private citySensorsStore: CitySensorsStore) {
   }
-
+  pollutionNumber: number;
   ngOnInit() {
     this.isOpen$ = this.citySensorsStore.state$.pipe(
       map(s => s.modalOpen),

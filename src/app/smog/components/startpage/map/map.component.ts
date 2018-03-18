@@ -1,18 +1,19 @@
-import { City } from './../../service/model/city';
-import { SensorAllInformationTo } from './../../service/model/sensorAllInformation-to';
-import { SensorTo } from './../../service/model/sensor-to';
-import { SensorsStore } from './../../service/sensors/sensors-store';
-import { SensorsService } from './../../service/sensors/sensors.service';
+import { element } from 'protractor';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { VoivodenshipsStore } from './../../service/map-poland/voivodenships-store';
-import { MapPolandService } from './../../service/map-poland/map-poland.service';
 import { Component, OnInit } from '@angular/core';
-import { VoivodeshipTo } from '../../service/model/voivodeship-to';
 import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
 import { DataTableModule } from 'primeng/datatable';
-import {ProgressSpinnerModule} from 'primeng/progressspinner';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { VoivodeshipTo } from '../../../service/model/voivodeship-to';
+import { SensorTo } from '../../../service/model/sensor-to';
+import { City } from '../../../service/model/city';
+import { MapPolandService } from '../../../service/map-poland/map-poland.service';
+import { VoivodenshipsStore } from '../../../service/map-poland/voivodenships-store';
+import { SensorsService } from '../../../service/sensors/sensors.service';
+import { SensorsStore } from '../../../service/sensors/sensors-store';
+import { roundValue } from '../../../../core/round/round-value';
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -46,6 +47,10 @@ export class MapComponent implements OnInit, OnDestroy {
     this.fillVoivodenshipsList();
     this.fillTable();
     this.isLoading$ = this.sensorsStore.state$.pipe(map((s: any) => s.isLoading), distinctUntilChanged());
+  }
+
+  allPoland() {
+    this.fillTable();
   }
 
   private fillVoivodenshipsList() {
@@ -82,15 +87,25 @@ export class MapComponent implements OnInit, OnDestroy {
     this.sensorsList$ = this.sensorsStore.state$.pipe(
       map((s: any) => s.sensorsList),
       distinctUntilChanged());
-      this.sensorsListSubscription = this.sensorsList$.subscribe((sensorsList: SensorTo[]) => {
+    this.sensorsListSubscription = this.sensorsList$.subscribe((sensorsList: SensorTo[]) => {
       if (sensorsList) {
         this.sensorsList = sensorsList;
         this.cities = [];
+        this.deleteSensorWithFalsePollution(sensorsList);
         this.groupSensorsForCity();
         this.avgPollutionLevelForCity();
       }
     });
   }
+  private deleteSensorWithFalsePollution(sensorsList: SensorTo[]) {
+    this.sensorsList.forEach(sensor => {
+      if (!sensor.pollutionLevel) {
+        const index = sensorsList.indexOf(sensor, 0);
+        this.sensorsList.splice(index, 1);
+      }
+    });
+  }
+
   private groupSensorsForCity() {
     this.sensorsList.forEach((sensor) => {
       if (sensor.address.locality && !this.cities.find(city => city.city === sensor.address.locality)) {
@@ -127,11 +142,19 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   avgPollutionLevelForCity() {
+    // tslint:disable-next-line:no-shadowed-variable
     this.cities.forEach(element => {
+      let count = 0;
       element.sensors.forEach(sensor => {
-        element.pollutionLevelAvg = element.pollutionLevelAvg + sensor.pollutionLevel;
+        if (sensor.pollutionLevel > 0) {
+          element.pollutionLevelAvg = element.pollutionLevelAvg + sensor.pollutionLevel;
+        } else {
+          count++;
+        }
+
       });
-      element.pollutionLevelAvg = element.pollutionLevelAvg / element.sensors.length;
+      element.pollutionLevelAvg = element.pollutionLevelAvg / (element.sensors.length - count);
+      element.pollutionLevelAvg = roundValue(element.pollutionLevelAvg, 1);
     });
   }
 

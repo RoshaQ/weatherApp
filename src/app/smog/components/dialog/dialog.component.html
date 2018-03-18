@@ -1,0 +1,26 @@
+<p-dialog [(visible)]="display" (onAfterHide)="alert('Dialog hidden!')" [width]="1000" [height]="650" [closable]=false [resizable]=false>
+  <p-header>
+    {{titleModal}}
+  </p-header>
+  <p-tabView>
+    <p-tabPanel header="Pomiary" leftIcon="fa-thermometer-full">
+      <app-dialog-sensor (addTitle)="setModalTitle($event)"></app-dialog-sensor>
+    </p-tabPanel>
+    <p-tabPanel header="Opis" leftIcon="fa-print">
+      PM10 – mieszanina zawieszonych w powietrzu cząsteczek o średnicy nie większej niż 10 μm. W skład mogą wchodzić takie substancje
+      toksyczne jak np. benzopireny, dioksyny i furany[1]. Występowanie pyłów PM10 związane jest m.in. z procesami spalania
+      paliw stałych i ciekłych[2]. W przypadku Polski normy dla pyłów PM10 są określone w następujących sposób[3]: poziom
+      dopuszczalny: 50 µg/m3 (dobowy); poziom informowania: 200 µg/m3 (dobowy); poziom alarmowy: 300 µg/m3 (dobowy).
+    </p-tabPanel>
+    <p-tabPanel header="Prognoza" leftIcon="fa-search">
+    </p-tabPanel>
+    <p-tabPanel header="Historia" leftIcon="fa-search">
+    </p-tabPanel>
+    <p-tabPanel header="Mapa" leftIcon="fa-search">
+      <app-gmap></app-gmap>
+    </p-tabPanel>
+  </p-tabView>
+  <p-footer>
+    <button type="button" pButton icon="fa-close" (click)="close()" label="Zamknij"></button>
+  </p-footer>
+</p-dialog>

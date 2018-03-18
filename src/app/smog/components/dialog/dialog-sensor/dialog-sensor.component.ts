@@ -1,15 +1,15 @@
-import { AverageAndColor } from './../../service/model/averageAndColor';
-import { SensorsStore } from './../../service/sensors/sensors-store';
-import { SensorAllInformationTo } from './../../service/model/sensorAllInformation-to';
-import { SensorsService } from './../../service/sensors/sensors.service';
-import { City } from './../../service/model/city';
-import { OnDestroy } from '@angular/core/src/metadata/lifecycle_hooks';
-import { CitySensorsStore } from './../../service/sensors/city-sensors-store';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
-import { Component, OnInit, Input, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { pluck, map, distinctUntilChanged } from 'rxjs/operators';
-import { MeasurementsColorAndAverage } from '../../service/model/measurementsColorAndAvarage';
+import { SensorAllInformationTo } from '../../../service/model/sensorAllInformation-to';
+import { AverageAndColor } from '../../../service/model/averageAndColor';
+import { MeasurementsColorAndAverage } from '../../../service/model/measurementsColorAndAvarage';
+import { CitySensorsStore } from '../../../service/sensors/city-sensors-store';
+import { SensorsService } from '../../../service/sensors/sensors.service';
+import { SensorsStore } from '../../../service/sensors/sensors-store';
+import { City } from '../../../service/model/city';
+import { roundValue } from '../../../../core/round/round-value';
 @Component({
   selector: 'app-dialog-sensor',
   templateUrl: './dialog-sensor.component.html',
@@ -21,7 +21,7 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
   emptyValueMap: Map<string, number>;
   display = false;
   subscription: Subscription[] = [];
-  titleModal: string;
+  @Output() addTitle = new EventEmitter<string>();
   idSensorsList: number[];
   sensorAllInformationTable: SensorAllInformationTo[];
   averageAndColor = {
@@ -72,18 +72,13 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription[0] = this.citySensorsStore.state$.pipe(pluck('modalOpen')).subscribe((isOpen: boolean) => {
-      if (isOpen) {
-        this.showDialog(isOpen);
-      }
-    });
     this.subscription[1] = this.citySensorsStore.state$.pipe(
       map(s => s.city),
       distinctUntilChanged())
       .subscribe((city: City) => {
         if (city) {
           this.idSensorsList = [];
-          this.titleModal = city.city;
+          this.setModalTitle(city.city);
           city.sensors.forEach(sensor => {
             this.idSensorsList.push(sensor.id);
           });
@@ -102,7 +97,9 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
         });
     }
   }
-
+  public setModalTitle(title: string) {
+    this.addTitle.emit(title);
+  }
   private calcukateAverageMeasurements() {
     this.emptyValueMap = new Map([
       ['airQualityIndex', 0],
@@ -157,17 +154,13 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
       this.emptyValueMap.set(name, emptyCount);
     }
   }
-  round(value: number, precision: number) {
-    const multiplier = Math.pow(10, precision || 0);
-    return Math.round(value * multiplier) / multiplier;
-  }
 
   private setPollutionData(
     avgMeasurements: AverageAndColor,
     name: string) {
     const length = this.sensorAllInformationTable.length;
     const avg = this.sumValueMap.get(name) / (length - this.emptyValueMap.get(name));
-    avgMeasurements.average = this.round(avg, 1);
+    avgMeasurements.average = roundValue(avg, 1);
     this.setColorsGrid(avgMeasurements, name);
   }
 
@@ -216,7 +209,7 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
       measurementsType.color = 'orange';
     }
     if (measurementsType.average <= 20 && measurementsType.average > 12) {
-      measurementsType.color = 'yellow';
+      measurementsType.color = '#ffbc26';
     }
     if (measurementsType.average <= 12 && measurementsType.average > 5) {
       measurementsType.color = 'green';
@@ -233,10 +226,10 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
   }
 
   private setColor(average: number): string {
-    if (average > 100) {
+    if (average >= 100) {
       return 'red';
     }
-    if (average > 75 && average <= 100) {
+    if (average > 75 && average < 100) {
       return 'orange';
     }
     if (average > 50 && average <= 75) {
@@ -249,15 +242,6 @@ export class DialogSensorComponent implements OnInit, OnDestroy {
       return '#3ADF00';
     }
 
-  }
-
-  showDialog(display: boolean) {
-    this.display = display;
-  }
-
-  close() {
-    this.display = false;
-    this.citySensorsStore.resetCitiesSensors();
   }
 
   setColorHTML(name: string): string {

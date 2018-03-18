@@ -1,0 +1,74 @@
+<div class="row">
+  <div id="airQualityIndex" class="col-md-4">
+    <div [ngStyle]="{'background': setColorHTML('airQualityIndex')}" class="card text-center z-depth-2">
+      <div class="card-body">
+        <p class="white-text mb-0">CAQI Indeks</p>
+        <p *ngIf="averageMeasurements.airQualityIndex.average then airQualityIndexYes; else NaN" class="white-text mb-0"></p>
+        <ng-template #airQualityIndexYes>
+          <p class="white-text mb-0">{{averageMeasurements.airQualityIndex.average}} </p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div id="pm10" class="col-md-4">
+    <div [ngStyle]="{'background': setColorHTML('pm10')}" class="card text-center z-depth-2">
+      <div class="card-body">
+        <p class="white-text mb-0">PM 10</p>
+        <p *ngIf="averageMeasurements.pm10.average then pm10Yes; else NaN" class="white-text mb-0"></p>
+        <ng-template #pm10Yes>
+          <p class="white-text mb-0">{{averageMeasurements.pm10.average}} μg/m3</p>
+        </ng-template>
+        <p class="white-text mb-0"></p>
+      </div>
+    </div>
+  </div>
+  <div id="pm25" class="col-md-4">
+    <div [ngStyle]="{'background': setColorHTML('pm25')}" class="card text-center z-depth-2">
+      <div class="card-body">
+        <p class="white-text mb-0">PM 2,5</p>
+        <p *ngIf="averageMeasurements.pm25.average then pm25Yes; else NaN" class="white-text mb-0"></p>
+        <ng-template #pm25Yes>
+          <p class="white-text mb-0">{{averageMeasurements.pm25.average}} μg/m3</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div id="pollutionLevel" class="col-md-4">
+    <div [ngStyle]="{'background': setColorHTML('pollutionLevel')}" class="card text-center z-depth-2">
+      <div class="card-body">
+        <p class="white-text mb-0">Poziom zanieczyszczeń</p>
+        <p *ngIf="averageMeasurements.pollutionLevel.average then pollutionLevelYes; else NaN" class="white-text mb-0"></p>
+        <ng-template #pollutionLevelYes>
+          <p class="white-text mb-0">{{averageMeasurements.pollutionLevel.average}}</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div id="temperature" class="col-md-4">
+    <div [ngStyle]="{'background': setColorHTML('temperature')}" class="card text-center z-depth-2">
+      <div class="card-body">
+        <p class="white-text mb-0">Temperatura</p>
+        <p *ngIf="averageMeasurements.temperature.average then temperatureYes; else NaN" class="white-text mb-0"></p>
+        <ng-template #temperatureYes>
+          <p class="white-text mb-0">{{averageMeasurements.temperature.average}} &#8451;</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+  <div id="humidity" class="col-md-4">
+    <div [ngStyle]="{'background': setColorHTML('humidity')}" class="card text-center z-depth-2">
+      <div class="card-body">
+        <p class="white-text mb-0">Wilgotność</p>
+        <p *ngIf="averageMeasurements.humidity.average then humidityYes; else NaN" class="white-text mb-0"></p>
+        <ng-template #humidityYes>
+          <p class="white-text mb-0">{{averageMeasurements.humidity.average}} %</p>
+        </ng-template>
+        <ng-template #NaN>
+          <p class="white-text mb-0">Brak danych</p>
+        </ng-template>
+      </div>
+    </div>
+  </div>
+</div>

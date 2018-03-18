@@ -1,5 +1,5 @@
 export interface MeasurementsSensorTo {
-  airQualityIndex: number;
+  airQualityIndex?: number;
   pm1?: number;
   pm25: number;
   pm10?: number;

@@ -18,30 +18,5 @@
   </p-footer>
 </p-dataTable>
 <div *ngIf="isOpen$ | async">
-<app-dialog-sensor></app-dialog-sensor>
+<app-dialog></app-dialog>
 </div>
-<!-- <p-dialog header="Title" [(visible)]="display" [width]="300">
-    Content
-</p-dialog> -->
-
-<!-- <p-table [columns]="cols" [value]="cities">
-      <ng-template pTemplate="header">
-          <tr>
-              <th [pSortableColumn]="col.field">Miejscowość
-                  <p-sortIcon [field]="field"></p-sortIcon>
-              </th>
-              <th [pSortableColumn]="field">Poziom zanieczyszczeń
-                  <p-sortIcon [field]="col.field"></p-sortIcon>
-              </th>
-          </tr>
-      </ng-template>
-      <ng-template pTemplate="body" let-city>
-          <tr>
-              <td>{{city.city}}</td>
-              <td>{{city.pollutionLevelAvg}}</td>
-          </tr>
-      </ng-template>
-      <ng-template pTemplate="summary">
-          Liczba miejscowości {{cities?.length}}
-      </ng-template>
-  </p-table> -->
